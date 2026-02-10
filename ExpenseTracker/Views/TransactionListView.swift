@@ -3,6 +3,8 @@ import SwiftData
 
 struct TransactionListView: View {
 
+    @Environment(\.modelContext) private var modelContext
+
     @Query(sort: \Transaction.transactionDate, order: .reverse)
     private var transactions: [Transaction]
 
@@ -10,26 +12,31 @@ struct TransactionListView: View {
 
     var body: some View {
         NavigationStack {
-            List(transactions) { transaction in
-                VStack(alignment: .leading) {
-                    Text("₹\(transaction.amount, specifier: "%.2f")")
-                        .font(.headline)
-
-                    Text(transaction.transactionDate.formatted(date: .abbreviated, time: .omitted))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    Text(transaction.source.rawValue.capitalized)
-                        .font(.caption2)
-                        .foregroundStyle(.gray)
+            Group {
+                if transactions.isEmpty {
+                    emptyState
+                } else {
+                    List {
+                        ForEach(transactions) { transaction in
+                            NavigationLink {
+                                AddTransactionView(transaction: transaction)
+                            } label: {
+                                TransactionRowView(transaction: transaction)
+                            }
+                        }
+                        .onDelete(perform: deleteTransactions)
+                    }
                 }
             }
-            .navigationTitle("Transactions")
+            .navigationTitle("Spendings")
             .toolbar {
-                Button {
-                    showAddTransaction = true
-                } label: {
-                    Image(systemName: "plus")
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        showAddTransaction = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
             .sheet(isPresented: $showAddTransaction) {
@@ -37,4 +44,22 @@ struct TransactionListView: View {
             }
         }
     }
+
+    // MARK: - Delete
+    private func deleteTransactions(at offsets: IndexSet) {
+        for index in offsets {
+            let transaction = transactions[index]
+            modelContext.delete(transaction)
+        }
+    }
+
+    // MARK: - Empty State
+    private var emptyState: some View {
+        ContentUnavailableView(
+            "No Expenses Yet",
+            systemImage: "tray",
+            description: Text("Add your first expense to get started.")
+        )
+    }
 }
+

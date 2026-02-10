@@ -7,6 +7,7 @@ struct ExpenseVaultApp: App {
         WindowGroup {
             TransactionListView()
         }
-        .modelContainer(PersistenceController.shared)
+        .modelContainer(for: Transaction.self)
     }
 }
+

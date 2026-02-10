@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "2338F59B-F9CF-4C91-9A21-6948B2D2E090"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5CD71DF3-4553-4276-969B-D22E202B9995"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../var/folders/hb/l9txwgdj11sfcmnfbsc9_62h0000gn/T/swift-generated-sources/@__swiftmacro_14ExpenseTracker0038TransactionIngestionServiceswift_yoBAmfMX39_23_33_BA8F3E73A7855E2623C8411B28D0EB76Ll9PredicatefMf_.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1"
+            endingLineNumber = "1"
+            landmarkName = "isDuplicate(_:)"
+            landmarkType = "37">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F044B9BD-0D5E-4C5A-88D3-DFE82E8515AB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../var/folders/hb/l9txwgdj11sfcmnfbsc9_62h0000gn/T/swift-generated-sources/@__swiftmacro_14ExpenseTracker0038TransactionIngestionServiceswift_yoBAmfMX38_23_33_BA8F3E73A7855E2623C8411B28D0EB76Ll9PredicatefMf_.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1"
+            endingLineNumber = "1"
+            landmarkName = "isDuplicate(_:)"
+            landmarkType = "37">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

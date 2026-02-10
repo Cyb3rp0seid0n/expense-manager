@@ -9,6 +9,7 @@ final class Transaction{
     var amount: Double
     var transactionDate: Date
     var merchant: String?
+    var merchantNormalized: String?
     
     var source: SourceType
     var createdAt: Date
@@ -19,6 +20,9 @@ final class Transaction{
         self.amount = amount
         self.transactionDate = transactionDate
         self.merchant = merchant
+        self.merchantNormalized = merchant?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .lowercased()
         self.source = source
         self.createdAt = createdAt
     }
