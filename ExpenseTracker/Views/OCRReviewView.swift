@@ -2,88 +2,98 @@ import SwiftUI
 import SwiftData
 
 struct OCRReviewView: View {
-
-    @Environment(\.dismiss) private var dismiss
+    
     @Environment(\.modelContext) private var modelContext
-
-    @State private var amountText: String
-    @State private var date: Date
-    @State private var merchant: String
-    @State private var showAmountError = false
-
-
-    private let rawTransaction: RawTransaction
-    private let ingestionService: TransactionIngestionService
-
-    init(rawTransaction: RawTransaction, modelContext: ModelContext) {
-        self.rawTransaction = rawTransaction
-        self.ingestionService = TransactionIngestionService(modelContext: modelContext)
-
-        _amountText = State(
-            initialValue: rawTransaction.amount.map { String($0) } ?? ""
-        )
-        _date = State(
-            initialValue: rawTransaction.date ?? Date()
-        )
-        _merchant = State(
-            initialValue: rawTransaction.description ?? ""
-        )
-    }
-
+    @Environment(\.dismiss) private var dismiss
+    
+    @State var rawTransaction: RawTransaction
+    @State private var showDuplicateAlert = false
+    @State private var pendingTransaction: RawTransaction?
+    
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Amount") {
-                    TextField("Amount", text: $amountText)
-                        .keyboardType(.decimalPad)
+        Form {
+            Section("Detected Information") {
+                if let amount = rawTransaction.amount {
+                    LabeledContent("Amount", value: amount, format: .currency(code: "INR"))
+                } else {
+                    Text("Amount not detected")
+                        .foregroundStyle(.secondary)
                 }
-
-                Section("Date") {
-                    DatePicker("Transaction Date", selection: $date, displayedComponents: .date)
+                
+                if let date = rawTransaction.date {
+                    LabeledContent("Date", value: date, format: .dateTime)
+                } else {
+                    Text("Date not detected")
+                        .foregroundStyle(.secondary)
                 }
-
-                Section("Merchant") {
-                    TextField("Merchant", text: $merchant)
-                }
-            }
-            .navigationTitle("Review Transaction")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Confirm") {
-                        saveTransaction()
-                    }
-                }
-
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                
+                if let description = rawTransaction.description {
+                    LabeledContent("Merchant", value: description)
+                } else {
+                    Text("Merchant not detected")
+                        .foregroundStyle(.secondary)
                 }
             }
-            .alert("Amount required",
-                   isPresented: $showAmountError) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Please enter a valid amount before saving.")
+            
+            Section {
+                Button("Confirm & Add") {
+                    saveTransaction()
+                }
+                .disabled(rawTransaction.amount == nil || rawTransaction.date == nil)
+                
+                Button("Cancel", role: .cancel) {
+                    dismiss()
+                }
             }
+        }
+        .navigationTitle("Review Transaction")
+        .alert("Duplicate Transaction", isPresented: $showDuplicateAlert) {
+            Button("Cancel", role: .cancel) {
+                pendingTransaction = nil
+            }
+            Button("Add Anyway") {
+                forceAddTransaction()
+            }
+        } message: {
+            Text("A similar transaction already exists for this merchant and amount. Do you want to add it anyway?")
         }
     }
-
+    
     private func saveTransaction() {
-        guard let amount = Double(amountText), amount > 0 else {
-            showAmountError = true
-            return
+        let ingestionService = TransactionIngestionService(modelContext: modelContext)
+        let result = ingestionService.ingest(rawTransaction, into: modelContext)
+        
+        switch result {
+        case .success:
+            dismiss()
+        case .duplicate:
+            pendingTransaction = rawTransaction
+            showDuplicateAlert = true
+        case .invalid:
+            // Could show an error alert here
+            dismiss()
         }
-
+    }
+    
+    private func forceAddTransaction() {
+        guard let pending = pendingTransaction else { return }
+        
         let transaction = Transaction(
-            amount: amount,
-            transactionDate: date,
-            merchant: merchant.isEmpty ? nil : merchant,
+            amount: pending.amount ?? 0,
+            transactionDate: pending.date ?? Date(),
+            merchant: pending.description,
             source: .ocr
         )
-
+        
         modelContext.insert(transaction)
-        dismiss()
+        
+        do {
+            try modelContext.save()
+            dismiss()
+        } catch {
+            print("Failed to force save transaction: \(error)")
+        }
+        
+        pendingTransaction = nil
     }
-
 }

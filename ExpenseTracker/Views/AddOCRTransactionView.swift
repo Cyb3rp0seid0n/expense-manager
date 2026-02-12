@@ -51,7 +51,7 @@ struct AddOCRTransactionView: View {
                 }
             }
             .sheet(item: $reviewTransaction) { raw in
-                OCRReviewView(rawTransaction: raw, modelContext: modelContext)
+                OCRReviewView(rawTransaction: raw)
             }
         }
     }

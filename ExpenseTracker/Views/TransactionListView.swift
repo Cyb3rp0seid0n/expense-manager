@@ -35,7 +35,14 @@ struct TransactionListView: View {
                     Button {
                         showAddTransaction = true
                     } label: {
-                        Image(systemName: "plus")
+                        Image(systemName: "plus.circle")
+                    }
+                }
+                ToolbarItem {
+                    NavigationLink {
+                        ScanReceiptView()
+                    } label: {
+                        Image(systemName: "doc.text.viewfinder")
                     }
                 }
             }
