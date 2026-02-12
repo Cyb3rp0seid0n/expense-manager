@@ -2,12 +2,14 @@ import SwiftUI
 import SwiftData
 
 @main
-struct ExpenseVaultApp: App {
+struct ExpenseTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            TransactionListView()
+            ContentView()
         }
-        .modelContainer(for: Transaction.self)
+        .modelContainer(for: [
+            Transaction.self,
+            UserProfile.self
+        ])
     }
 }
-
