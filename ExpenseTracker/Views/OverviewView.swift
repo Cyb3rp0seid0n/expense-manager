@@ -15,61 +15,99 @@ struct OverviewView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    if let user {
+            ZStack {
+                
+                // Step 1: Soft blue background
+                Color(red: 0.94, green: 0.97, blue: 1.0)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
                         
-                        Text("Hello, \(user.name)")
-                            .font(.title)
-                            .bold()
-                        
-                        let currentSpend = currentMonthTotal()
-                        let remaining = user.monthlyAllowance - currentSpend
-                        let progress = user.monthlyAllowance > 0
-                            ? min(currentSpend / user.monthlyAllowance, 1.0)
-                            : 0
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Allowance: ₹\(user.monthlyAllowance, specifier: "%.0f")")
-                            Text("Spent: ₹\(currentSpend, specifier: "%.0f")")
-                            Text("Remaining: ₹\(remaining, specifier: "%.0f")")
-                                .foregroundColor(remaining < 0 ? .red : .primary)
-                        }
-                        
-                        ProgressView(value: progress)
-                            .tint(progress > 0.9 ? .red : .blue)
-                        
-                        Divider()
-                        
-                        Text("Spending Trend (Last 3 Months)")
-                            .font(.headline)
-                        
-                        Chart(lastThreeMonthsData()) { item in
-                            LineMark(
-                                x: .value("Month", item.month),
-                                y: .value("Total", item.total)
-                            )
-                            .interpolationMethod(.catmullRom)
-                        }
-                        .frame(height: 220)
-                        
-                    } else {
-                        
-                        VStack(spacing: 16) {
-                            Text("No user profile found.")
-                                .font(.headline)
+                        if let user {
                             
-                            NavigationLink("Create Profile") {
-                                ProfileView()
+                            // Header
+                            Text("Hello, \(user.name)")
+                                .font(.largeTitle)
+                                .bold()
+                            
+                            let currentSpend = currentMonthTotal()
+                            let remaining = user.monthlyAllowance - currentSpend
+                            let progress = user.monthlyAllowance > 0
+                                ? min(currentSpend / user.monthlyAllowance, 1.0)
+                                : 0
+                            
+                            // Step 2: Spending Card
+                            VStack(alignment: .leading, spacing: 12) {
+                                
+                                Text("Allowance: ₹\(user.monthlyAllowance, specifier: "%.0f")")
+                                
+                                Text("Spent: ₹\(currentSpend, specifier: "%.0f")")
+                                
+                                Text("Remaining: ₹\(remaining, specifier: "%.0f")")
+                                    .foregroundColor(remaining < 0 ? .red : .primary)
+                                
+                                ProgressView(value: progress)
+                                    .tint(progress > 0.9
+                                          ? Color.red.opacity(0.7)
+                                          : Color.blue.opacity(0.7))
                             }
-                            .buttonStyle(.borderedProminent)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.05),
+                                    radius: 8,
+                                    x: 0,
+                                    y: 4)
+                            
+                            // Step 3: Chart Card
+                            VStack(alignment: .leading, spacing: 12) {
+                                
+                                Text("Spending Trend (Last 3 Months)")
+                                    .font(.headline)
+                                
+                                Chart(lastThreeMonthsData()) { item in
+                                    LineMark(
+                                        x: .value("Month", item.month),
+                                        y: .value("Total", item.total)
+                                    )
+                                    .interpolationMethod(.catmullRom)
+                                }
+                                .frame(height: 220)
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.05),
+                                    radius: 8,
+                                    x: 0,
+                                    y: 4)
+                            
+                        } else {
+                            
+                            // No Profile Card
+                            VStack(spacing: 16) {
+                                Text("No user profile found.")
+                                    .font(.headline)
+                                
+                                NavigationLink("Create Profile") {
+                                    ProfileView()
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.05),
+                                    radius: 8,
+                                    x: 0,
+                                    y: 4)
+                            .padding(.top, 100)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 100)
                     }
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle("Overview")
             .toolbar {

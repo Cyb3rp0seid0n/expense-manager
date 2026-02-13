@@ -12,25 +12,48 @@ struct TransactionListView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if transactions.isEmpty {
-                    emptyState
-                } else {
-                    List {
-                        ForEach(transactions) { transaction in
-                            NavigationLink {
-                                AddTransactionView(transaction: transaction)
-                            } label: {
-                                TransactionRowView(transaction: transaction)
+            ZStack {
+                // Soft blue background
+                Color(red: 0.94, green: 0.97, blue: 1.0)
+                    .ignoresSafeArea()
+                
+                Group {
+                    if transactions.isEmpty {
+                        emptyState
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 0) {
+                                List {
+                                    ForEach(Array(transactions.enumerated()), id: \.element.id) { index, transaction in
+                                        NavigationLink {
+                                            AddTransactionView(transaction: transaction)
+                                        } label: {
+                                            TransactionRowView(transaction: transaction)
+                                        }
+                                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+                                        .listRowSeparator(index < transactions.count - 1 ? .visible : .hidden)
+                                        .listRowBackground(Color.white)
+                                    }
+                                    .onDelete(perform: deleteTransactions)
+                                }
+                                .listStyle(.plain)
+                                .scrollContentBackground(.hidden)
+                                .scrollDisabled(true)
+                                .frame(height: CGFloat(transactions.count) * 80) // Approximate height per row
                             }
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.05),
+                                    radius: 8,
+                                    x: 0,
+                                    y: 4)
+                            .padding()
                         }
-                        .onDelete(perform: deleteTransactions)
                     }
                 }
             }
             .navigationTitle("Spendings")
             .toolbar {
-
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         showAddTransaction = true
@@ -62,11 +85,27 @@ struct TransactionListView: View {
 
     // MARK: - Empty State
     private var emptyState: some View {
-        ContentUnavailableView(
-            "No Expenses Yet",
-            systemImage: "tray",
-            description: Text("Add your first expense to get started.")
-        )
+        VStack(spacing: 16) {
+            Image(systemName: "tray")
+                .font(.system(size: 60))
+                .foregroundColor(.gray.opacity(0.5))
+            
+            Text("No Expenses Yet")
+                .font(.title2)
+                .bold()
+            
+            Text("Add your first expense to get started.")
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(40)
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.05),
+                radius: 8,
+                x: 0,
+                y: 4)
+        .padding()
     }
 }
-
