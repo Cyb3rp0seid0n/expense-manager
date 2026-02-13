@@ -17,7 +17,6 @@ struct OverviewView: View {
         NavigationStack {
             ZStack {
                 
-                // Step 1: Soft blue background
                 Color(red: 0.94, green: 0.97, blue: 1.0)
                     .ignoresSafeArea()
                 
@@ -26,7 +25,6 @@ struct OverviewView: View {
                         
                         if let user {
                             
-                            // Header
                             Text("Hello, \(user.name)")
                                 .font(.largeTitle)
                                 .bold()
@@ -37,7 +35,6 @@ struct OverviewView: View {
                                 ? min(currentSpend / user.monthlyAllowance, 1.0)
                                 : 0
                             
-                            // Step 2: Spending Card
                             VStack(alignment: .leading, spacing: 12) {
                                 
                                 Text("Allowance: ₹\(user.monthlyAllowance, specifier: "%.0f")")
@@ -60,7 +57,6 @@ struct OverviewView: View {
                                     x: 0,
                                     y: 4)
                             
-                            // Step 3: Chart Card
                             VStack(alignment: .leading, spacing: 12) {
                                 
                                 Text("Spending Trend (Last 3 Months)")
@@ -85,7 +81,6 @@ struct OverviewView: View {
                             
                         } else {
                             
-                            // No Profile Card
                             VStack(spacing: 16) {
                                 Text("No user profile found.")
                                     .font(.headline)
@@ -119,8 +114,6 @@ struct OverviewView: View {
             }
         }
     }
-    
-    // MARK: - Helpers
     
     private func currentMonthTotal() -> Double {
         let calendar = Calendar.current

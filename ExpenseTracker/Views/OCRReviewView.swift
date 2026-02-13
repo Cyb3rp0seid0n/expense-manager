@@ -70,7 +70,6 @@ struct OCRReviewView: View {
             pendingTransaction = rawTransaction
             showDuplicateAlert = true
         case .invalid:
-            // Could show an error alert here
             dismiss()
         }
     }

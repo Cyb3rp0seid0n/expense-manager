@@ -61,7 +61,7 @@ struct ScanReceiptView: View {
                         isProcessing = true
                         await processImage(from: newValue)
                         isProcessing = false
-                        selectedItem = nil // Reset for next selection
+                        selectedItem = nil
                     }
                 }
             }
@@ -93,39 +93,29 @@ private extension ScanReceiptView {
     func runOCR(on image: UIImage?) async {
         guard let image else { return }
         
-        print("🔍 Starting OCR on image...")
-        
-        // Step 1: Extract text from image using Vision
         let extractedText = await extractText(from: image)
         
-        print("📝 Extracted text: \(extractedText ?? "nil")")
-        
-        // Step 2: Parse the extracted text
         if let text = extractedText, !text.isEmpty {
             rawTransaction = OCRParser.parse(text: text)
             
-            print(rawTransaction != nil ? "✅ Parsed result: Success" : "⚠️ OCR parsing failed")
         } else {
-            print("⚠️ No text extracted from image")
+            print("No text extracted from image")
         }
     }
     
     func extractText(from image: UIImage) async -> String? {
         guard let cgImage = image.cgImage else {
-            print("❌ Failed to get CGImage")
             return nil
         }
         
         return await withCheckedContinuation { continuation in
             let request = VNRecognizeTextRequest { request, error in
                 if let error = error {
-                    print("❌ Vision error: \(error)")
                     continuation.resume(returning: nil)
                     return
                 }
                 
                 guard let observations = request.results as? [VNRecognizedTextObservation] else {
-                    print("❌ No observations found")
                     continuation.resume(returning: nil)
                     return
                 }
@@ -134,7 +124,6 @@ private extension ScanReceiptView {
                     observation.topCandidates(1).first?.string
                 }.joined(separator: "\n")
                 
-                print("📄 Vision recognized \(observations.count) text blocks")
                 continuation.resume(returning: recognizedText)
             }
             
@@ -145,7 +134,6 @@ private extension ScanReceiptView {
             do {
                 try handler.perform([request])
             } catch {
-                print("❌ Failed to perform Vision request: \(error)")
                 continuation.resume(returning: nil)
             }
         }

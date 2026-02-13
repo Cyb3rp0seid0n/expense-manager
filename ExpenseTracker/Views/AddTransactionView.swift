@@ -77,13 +77,11 @@ struct AddTransactionView: View {
         }
 
         if let transaction = transactionToEdit {
-            // EDIT existing
             transaction.amount = amount
             transaction.transactionDate = date
             transaction.merchant = merchant.isEmpty ? nil : merchant
             dismiss()
         } else {
-            // CREATE new - use ingestion service for deduplication
             let rawTransaction = RawTransaction(
                 amount: amount,
                 date: date,
@@ -109,7 +107,6 @@ struct AddTransactionView: View {
     private func forceAddTransaction() {
         guard let rawTransaction = pendingTransaction else { return }
         
-        // Directly insert without duplicate check
         let transaction = Transaction(
             amount: rawTransaction.amount ?? 0,
             transactionDate: rawTransaction.date ?? Date(),

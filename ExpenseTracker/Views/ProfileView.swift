@@ -33,11 +33,11 @@ struct ProfileView: View {
                         saveProfile()
                     }
                     .buttonStyle(.borderedProminent)
-                    .frame(width: 150)   // 👈 controls length
+                    .frame(width: 150)
                     
                     Spacer()
                 }
-                .listRowBackground(Color.clear) // removes full row styling
+                .listRowBackground(Color.clear)
             }
         }
         .navigationTitle("Profile")

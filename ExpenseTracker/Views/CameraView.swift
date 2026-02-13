@@ -30,7 +30,6 @@ struct CameraView: UIViewControllerRepresentable {
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
         ) {
             if let image = info[.originalImage] as? UIImage {
-                // Resize before passing to parent
                 parent.image = resizeImage(image, maxDimension: 1024)
             }
             picker.dismiss(animated: true)

@@ -13,7 +13,6 @@ struct TransactionListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Soft blue background
                 Color(red: 0.94, green: 0.97, blue: 1.0)
                     .ignoresSafeArea()
                 
@@ -39,7 +38,7 @@ struct TransactionListView: View {
                                 .listStyle(.plain)
                                 .scrollContentBackground(.hidden)
                                 .scrollDisabled(true)
-                                .frame(height: CGFloat(transactions.count) * 80) // Approximate height per row
+                                .frame(height: CGFloat(transactions.count) * 80)
                             }
                             .background(Color.white)
                             .cornerRadius(16)
@@ -75,7 +74,6 @@ struct TransactionListView: View {
         }
     }
 
-    // MARK: - Delete
     private func deleteTransactions(at offsets: IndexSet) {
         for index in offsets {
             let transaction = transactions[index]
@@ -83,7 +81,6 @@ struct TransactionListView: View {
         }
     }
 
-    // MARK: - Empty State
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "tray")

@@ -26,9 +26,7 @@ final class TransactionIngestionService {
         )
     }
     private func isDuplicate(_ transaction: Transaction, context: ModelContext) -> Bool {
-        // If merchant is missing, we skip dedupe
         guard let merchantKey = transaction.merchantNormalized else {
-            print("⚠️ No merchant key for: \(transaction.merchant ?? "nil")")
             return false
         }
 
@@ -37,8 +35,6 @@ final class TransactionIngestionService {
         let endTime = transaction.transactionDate.addingTimeInterval(window)
         let amount = transaction.amount
         
-        print("🔍 Checking duplicate for: \(merchantKey), amount: \(amount), date: \(transaction.transactionDate)")
-        print("   Window: \(startTime) to \(endTime)")
 
         let descriptor = FetchDescriptor<Transaction>(
             predicate: #Predicate<Transaction> { tx in
@@ -51,13 +47,8 @@ final class TransactionIngestionService {
 
         do {
                 let matches = try context.fetch(descriptor)
-                print("   Found \(matches.count) matches")
-                for match in matches {
-                    print("   - Match: \(match.merchant ?? "nil"), date: \(match.transactionDate)")
-                }
                 return !matches.isEmpty
         } catch {
-            print("❌ Error checking duplicates: \(error)")
             return false
         }
     }
@@ -94,22 +85,17 @@ final class TransactionIngestionService {
             source: raw.source
         )
 
-        print("📝 Attempting to ingest: \(transaction.merchant ?? "nil"), \(amount), \(date)")
 
         if isDuplicate(transaction, context: context) {
-            print("⛔ Duplicate detected, skipping")
             return .duplicate
         }
 
-        print("✅ Inserting new transaction")
         context.insert(transaction)
         
         do {
             try context.save()
-            print("💾 Saved successfully")
             return .success
         } catch {
-            print("❌ Failed to save transaction: \(error)")
             return .invalid
         }
     }
