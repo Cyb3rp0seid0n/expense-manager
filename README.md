@@ -20,7 +20,7 @@ A modern iOS expense management application built with SwiftUI and SwiftData, fe
 ## 🏗️ Architecture
 
 ### Design Patterns
-- **MVVM with SwiftUI**: Views observe models via `@Query` and `@Environment`
+- **MV-style architecture with SwiftUI**: Views observe models via `@Query` and `@Environment`
 - **Service Layer**: Business logic isolated from UI (testable, reusable)
 - **DTO Pattern**: `RawTransaction` separates unvalidated input from persisted `Transaction`
 - **Strategy Pattern**: OCR parser uses multiple extraction strategies with fallbacks
